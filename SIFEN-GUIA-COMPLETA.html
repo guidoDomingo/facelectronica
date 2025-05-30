@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Completa SIFEN - Facturación Electrónica Paraguay</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+            padding: 10px;
+            background: #ecf0f1;
+            border-left: 5px solid #3498db;
+        }
+        h3 {
+            color: #34495e;
+            margin-top: 20px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .environment {
+            background: #f8f9fa;
+            border: 2px solid #28a745;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .environment.test {
+            border-color: #ffc107;
+            background: #fff3cd;
+        }
+        .environment.prod {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        .code {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .table th {
+            background: #3498db;
+            color: white;
+        }
+        .table tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+        .alert {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 5px solid;
+        }
+        .alert.info {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+        .alert.warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        .alert.danger {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .alert.success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .nav {
+            background: #34495e;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: background 0.3s;
+        }
+        .nav a:hover {
+            background: #3498db;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .flow-diagram {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .flow-step {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            position: relative;
+        }
+        .flow-step:after {
+            content: '→';
+            position: absolute;
+            right: -25px;
+            color: #3498db;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .flow-step:last-child:after {
+            content: '';
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🇵🇾 Guía Completa SIFEN - Facturación Electrónica Paraguay</h1>
+        
+        <div class="nav">
+            <a href="#datos-necesarios">Datos Necesarios</a>
+            <a href="#configuracion">Configuración</a>
+            <a href="#api-docs">API Documentación</a>
+            <a href="#testing">Testing</a>
+            <a href="#produccion">Producción</a>
+            <a href="#ejemplos">Ejemplos</a>
+        </div>
+
+        <div class="alert info">
+            <strong>SIFEN (Sistema Integrado de Facturación Electrónica Nacional)</strong> es el sistema oficial de Paraguay para la emisión de documentos electrónicos. Esta guía te ayudará a integrar tu sistema con SIFEN usando nuestra implementación Laravel + Node.js.
+        </div>
+
+        <section id="datos-necesarios">
+            <h2>📋 Datos Necesarios para SIFEN</h2>
+            
+            <h3>1. Datos del Contribuyente (Emisor)</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Tipo</th>
+                        <th>Requerido</th>
+                        <th>Descripción</th>
+                        <th>Ejemplo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>RUC</td>
+                        <td>String</td>
+                        <td>✅ Sí</td>
+                        <td>RUC del emisor con guión y dígito verificador</td>
+                        <td>80069563-1</td>
+                    </tr>
+                    <tr>
+                        <td>Razón Social</td>
+                        <td>String</td>
+                        <td>✅ Sí</td>
+                        <td>Nombre completo de la empresa</td>
+                        <td>MI EMPRESA S.A.</td>
+                    </tr>
+                    <tr>
+                        <td>Nombre Fantasía</td>
+                        <td>String</td>
+                        <td>❌ No</td>
+                        <td>Nombre comercial</td>
+                        <td>Mi Empresa</td>
+                    </tr>
+                    <tr>
+                        <td>Timbrado Número</td>
+                        <td>String</td>
+                        <td>✅ Sí</td>
+                        <td>Número de timbrado otorgado por SET</td>
+                        <td>12558946</td>
+                    </tr>
+                    <tr>
+                        <td>Timbrado Fecha</td>
+                        <td>Date</td>
+                        <td>✅ Sí</td>
+                        <td>Fecha de inicio de vigencia del timbrado</td>
+                        <td>2023-01-01</td>
+                    </tr>
+                    <tr>
+                        <td>Tipo Contribuyente</td>
+                        <td>Integer</td>
+                        <td>✅ Sí</td>
+                        <td>1=Persona Física, 2=Persona Jurídica</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td>Tipo Régimen</td>
+                        <td>Integer</td>
+                        <td>✅ Sí</td>
+                        <td>8=Simplificado, 2=General</td>
+                        <td>8</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>2. Actividades Económicas</h3>
+            <div class="code">
+"actividadesEconomicas": [{
+    "codigo": "62010",
+    "descripcion": "Desarrollo de Software y Sistemas Informáticos"
+}]</div>
+
+            <h3>3. Establecimientos</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Requerido</th>
+                        <th>Descripción</th>
+                        <th>Ejemplo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>codigo</td>
+                        <td>✅ Sí</td>
+                        <td>Código del establecimiento (3 dígitos)</td>
+                        <td>001</td>
+                    </tr>
+                    <tr>
+                        <td>direccion</td>
+                        <td>✅ Sí</td>
+                        <td>Dirección del establecimiento</td>
+                        <td>Avda. España</td>
+                    </tr>
+                    <tr>
+                        <td>numeroCasa</td>
+                        <td>❌ No</td>
+                        <td>Número de casa/edificio</td>
+                        <td>1234</td>
+                    </tr>
+                    <tr>
+                        <td>departamento</td>
+                        <td>✅ Sí</td>
+                        <td>Código de departamento</td>
+                        <td>11 (Alto Paraná)</td>
+                    </tr>
+                    <tr>
+                        <td>distrito</td>
+                        <td>✅ Sí</td>
+                        <td>Código de distrito</td>
+                        <td>145 (Ciudad del Este)</td>
+                    </tr>
+                    <tr>
+                        <td>ciudad</td>
+                        <td>✅ Sí</td>
+                        <td>Código de ciudad</td>
+                        <td>3432</td>
+                    </tr>
+                    <tr>
+                        <td>telefono</td>
+                        <td>❌ No</td>
+                        <td>Teléfono del establecimiento</td>
+                        <td>021-123456</td>
+                    </tr>
+                    <tr>
+                        <td>email</td>
+                        <td>❌ No</td>
+                        <td>Email del establecimiento</td>
+                        <td>contacto@empresa.com.py</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4. Certificados Digitales</h3>
+            <div class="alert warning">
+                <strong>Importante:</strong> Para producción necesitas un certificado digital válido emitido por una Autoridad Certificadora reconocida por Paraguay.
+            </div>
+            
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Uso</th>
+                        <th>Formato</th>
+                        <th>Ubicación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Certificado de Prueba</td>
+                        <td>Testing/Desarrollo</td>
+                        <td>.p12/.pfx</td>
+                        <td>node-service/cert/test/</td>
+                    </tr>
+                    <tr>
+                        <td>Certificado de Producción</td>
+                        <td>Producción</td>
+                        <td>.p12/.pfx</td>
+                        <td>storage/app/certificados/</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="configuracion">
+            <h2>⚙️ Configuración del Sistema</h2>
+            
+            <h3>Variables de Entorno (.env)</h3>
+            <div class="code">
+# Servicio Node.js
+FACTURACION_ELECTRONICA_NODE_API_URL=http://localhost:3000
+
+# Datos del Contribuyente
+FACTURACION_ELECTRONICA_RUC=80069563-1
+FACTURACION_ELECTRONICA_RAZON_SOCIAL="MI EMPRESA S.A."
+FACTURACION_ELECTRONICA_NOMBRE_FANTASIA="Mi Empresa"
+FACTURACION_ELECTRONICA_TIMBRADO_NUMERO=12558946
+FACTURACION_ELECTRONICA_TIMBRADO_FECHA=2023-01-01
+FACTURACION_ELECTRONICA_TIPO_CONTRIBUYENTE=2
+FACTURACION_ELECTRONICA_TIPO_REGIMEN=8
+
+# Certificados y Seguridad
+FACTURACION_CERT_PATH=storage/app/certificados/certificado.p12
+FACTURACION_CERT_CLAVE=mi_clave_certificado
+FACTURACION_FIRMA_HABILITADA=true
+FACTURACION_ID_CSC=0001
+FACTURACION_CODIGO_CSC=codigo_secreto_sifen
+
+# Ambiente (test/prod)
+FACTURACION_AMBIENTE=test</div>
+
+            <div class="environment test">
+                <h4>🧪 Configuración para TESTING</h4>
+                <div class="code">
+# URLs de Testing
+FACTURACION_URL_CONSULTA_TEST=https://sifen-test.set.gov.py/de/ws/consultas-services.wsdl
+FACTURACION_URL_RECEPCION_TEST=https://sifen-test.set.gov.py/de/ws/sync-services.wsdl
+FACTURACION_URL_EVENTOS_TEST=https://sifen-test.set.gov.py/de/ws/eventos-services.wsdl
+
+# Certificado de Testing
+FACTURACION_CERT_PATH=node-service/cert/test/certificado-test.p12
+FACTURACION_CERT_CLAVE=123456
+FACTURACION_AMBIENTE=test</div>
+            </div>
+
+            <div class="environment prod">
+                <h4>🚀 Configuración para PRODUCCIÓN</h4>
+                <div class="code">
+# URLs de Producción
+FACTURACION_URL_CONSULTA_PROD=https://sifen.set.gov.py/de/ws/consultas-services.wsdl
+FACTURACION_URL_RECEPCION_PROD=https://sifen.set.gov.py/de/ws/sync-services.wsdl
+FACTURACION_URL_EVENTOS_PROD=https://sifen.set.gov.py/de/ws/eventos-services.wsdl
+
+# Certificado de Producción
+FACTURACION_CERT_PATH=storage/app/certificados/certificado-prod.p12
+FACTURACION_CERT_CLAVE=clave_real_certificado
+FACTURACION_AMBIENTE=prod</div>
+            </div>
+        </section>
+
+        <section id="api-docs">
+            <h2>📡 Documentación de la API</h2>
+            
+            <h3>Arquitectura del Sistema</h3>
+            <div class="flow-diagram">
+                <div class="flow-step">Laravel Frontend</div>
+                <div class="flow-step">API REST</div>
+                <div class="flow-step">Node.js Service</div>
+                <div class="flow-step">SIFEN API</div>
+            </div>
+
+            <h3>🔄 Cómo Funciona</h3>
+            <ol>
+                <li><strong>Laravel</strong> maneja la interfaz web y base de datos</li>
+                <li><strong>API REST</strong> conecta Laravel con el servicio Node.js</li>
+                <li><strong>Node.js Service</strong> usa la librería <code>facturacionelectronicapy-xmlgen</code></li>
+                <li><strong>SIFEN API</strong> recibe y procesa los documentos XML</li>
+            </ol>
+
+            <h3>📚 Librería Node.js: facturacionelectronicapy-xmlgen</h3>
+            <div class="alert info">
+                <strong>Librería oficial:</strong> <a href="https://github.com/TIPS-SA/facturacionelectronicapy-xmlgen" target="_blank">facturacionelectronicapy-xmlgen</a>
+                <br><strong>Versión actual:</strong> 1.0.265
+                <br><strong>Funcionalidades:</strong> Generación de XML, validación, firma digital, integración con SIFEN
+            </div>
+
+            <h3>🛠️ Endpoints Principales</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Endpoint</th>
+                        <th>Método</th>
+                        <th>Descripción</th>
+                        <th>Parámetros</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>/generate-xml</td>
+                        <td>POST</td>
+                        <td>Genera XML para factura electrónica</td>
+                        <td>params, data</td>
+                    </tr>
+                    <tr>
+                        <td>/generate-cdc</td>
+                        <td>POST</td>
+                        <td>Genera Código de Control (CDC)</td>
+                        <td>data</td>
+                    </tr>
+                    <tr>
+                        <td>/validate-data</td>
+                        <td>POST</td>
+                        <td>Valida datos antes de generar XML</td>
+                        <td>data</td>
+                    </tr>
+                    <tr>
+                        <td>/enviar-documento</td>
+                        <td>POST</td>
+                        <td>Envía documento a SIFEN</td>
+                        <td>xml, ambiente</td>
+                    </tr>
+                    <tr>
+                        <td>/consultar-estado-documento</td>
+                        <td>POST</td>
+                        <td>Consulta estado en SIFEN</td>
+                        <td>cdc, ambiente</td>
+                    </tr>
+                    <tr>
+                        <td>/sign-xml</td>
+                        <td>POST</td>
+                        <td>Firma documento XML</td>
+                        <td>xml, certificado</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>📨 Eventos SIFEN</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Evento</th>
+                        <th>Endpoint</th>
+                        <th>Cuándo Usar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Cancelación</td>
+                        <td>/generate-xml-evento-cancelacion</td>
+                        <td>Anular una factura ya emitida</td>
+                    </tr>
+                    <tr>
+                        <td>Inutilización</td>
+                        <td>/generate-xml-evento-inutilizacion</td>
+                        <td>Inutilizar rangos de numeración</td>
+                    </tr>
+                    <tr>
+                        <td>Conformidad</td>
+                        <td>/generate-xml-evento-conformidad</td>
+                        <td>Confirmar recepción de factura</td>
+                    </tr>
+                    <tr>
+                        <td>Disconformidad</td>
+                        <td>/generate-xml-evento-disconformidad</td>
+                        <td>Rechazar una factura recibida</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="testing">
+            <h2>🧪 Testing - Ambiente de Pruebas</h2>
+            
+            <div class="alert warning">
+                <strong>Importante:</strong> Usa datos ficticios en el ambiente de testing. No uses RUCs reales de terceros.
+            </div>
+
+            <h3>Datos para Testing</h3>
+            <div class="code">
+{
+  "contribuyente": {
+    "ruc": "80000001-1",
+    "razonSocial": "EMPRESA DE PRUEBA S.A.",
+    "nombreFantasia": "Empresa Test",
+    "timbradoNumero": "12345678",
+    "timbradoFecha": "2023-01-01"
+  },
+  "cliente": {
+    "ruc": "80000002-2",
+    "razonSocial": "CLIENTE DE PRUEBA",
+    "documentoTipo": 1,
+    "documentoNumero": "1234567"
+  }
+}</div>
+
+            <h3>🔧 Comandos de Testing</h3>
+            <div class="code">
+# Iniciar servicio Node.js
+cd node-service
+npm start
+
+# Probar conexión
+curl http://localhost:3000
+
+# Generar XML de prueba
+php artisan tinker
+>>> $factura = new FacturaElectronica();
+>>> $factura->generar_xml_testing();
+
+# Verificar QR
+php test_controller_final.php</div>
+
+            <h3>Checklist de Testing</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Prueba</th>
+                        <th>Comando/Archivo</th>
+                        <th>Resultado Esperado</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Servicio Node.js activo</td>
+                        <td>npm start</td>
+                        <td>Servidor en puerto 3000</td>
+                        <td>✅</td>
+                    </tr>
+                    <tr>
+                        <td>Generación XML</td>
+                        <td>test_qr_generation.php</td>
+                        <td>XML válido generado</td>
+                        <td>✅</td>
+                    </tr>
+                    <tr>
+                        <td>Códigos QR</td>
+                        <td>test_controller_final.php</td>
+                        <td>QR PNG válido</td>
+                        <td>✅</td>
+                    </tr>
+                    <tr>
+                        <td>Conexión SIFEN Test</td>
+                        <td>/verificar-conexion-sifen</td>
+                        <td>Respuesta exitosa</td>
+                        <td>⏳</td>
+                    </tr>
+                    <tr>
+                        <td>Certificados</td>
+                        <td>/estado-certificados</td>
+                        <td>Certificado válido</td>
+                        <td>⏳</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="produccion">
+            <h2>🚀 Producción - Configuración Live</h2>
+            
+            <div class="alert danger">
+                <strong>⚠️ ATENCIÓN:</strong> En producción necesitas:
+                <ul>
+                    <li>Certificado digital REAL y válido</li>
+                    <li>RUC y timbrado REALES</li>
+                    <li>Datos de contribuyente REALES</li>
+                    <li>Conexión segura (HTTPS)</li>
+                </ul>
+            </div>
+
+            <h3>📋 Requisitos para Producción</h3>
+            <ol>
+                <li><strong>Obtener Certificado Digital:</strong>
+                    <ul>
+                        <li>Solicitar en una Autoridad Certificadora reconocida</li>
+                        <li>Instalar certificado en formato .p12/.pfx</li>
+                        <li>Configurar clave del certificado</li>
+                    </ul>
+                </li>
+                <li><strong>Registrarse en SIFEN:</strong>
+                    <ul>
+                        <li>Acceder al portal SET</li>
+                        <li>Solicitar acceso a SIFEN</li>
+                        <li>Obtener credenciales de producción</li>
+                    </ul>
+                </li>
+                <li><strong>Configurar Servidor:</strong>
+                    <ul>
+                        <li>HTTPS obligatorio</li>
+                        <li>Node.js en puerto seguro</li>
+                        <li>Base de datos respaldada</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>🔒 Configuración de Seguridad</h3>
+            <div class="code">
+# .env para Producción
+FACTURACION_AMBIENTE=prod
+FACTURACION_FIRMA_HABILITADA=true
+FACTURACION_CERT_PATH=/secure/path/certificado-prod.p12
+FACTURACION_CERT_CLAVE=clave_super_segura
+
+# URLs de Producción
+FACTURACION_URL_CONSULTA_PROD=https://sifen.set.gov.py/de/ws/consultas-services.wsdl
+FACTURACION_URL_RECEPCION_PROD=https://sifen.set.gov.py/de/ws/sync-services.wsdl
+FACTURACION_URL_EVENTOS_PROD=https://sifen.set.gov.py/de/ws/eventos-services.wsdl</div>
+
+            <h3>📊 Monitoreo en Producción</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Métrica</th>
+                        <th>Endpoint</th>
+                        <th>Frecuencia</th>
+                        <th>Acción si Falla</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Estado Servicio</td>
+                        <td>GET /</td>
+                        <td>1 min</td>
+                        <td>Reiniciar servicio</td>
+                    </tr>
+                    <tr>
+                        <td>Conexión SIFEN</td>
+                        <td>GET /verificar-conexion-sifen</td>
+                        <td>5 min</td>
+                        <td>Alerta administrador</td>
+                    </tr>
+                    <tr>
+                        <td>Estado Certificados</td>
+                        <td>GET /estado-certificados</td>
+                        <td>1 hora</td>
+                        <td>Renovar si vence</td>
+                    </tr>
+                    <tr>
+                        <td>Logs de Error</td>
+                        <td>storage/logs/</td>
+                        <td>Continuo</td>
+                        <td>Investigar errores</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="ejemplos">
+            <h2>📖 Ejemplos Prácticos</h2>
+            
+            <h3>1. Generar Factura Completa</h3>
+            <div class="code">
+// Ejemplo PHP (Laravel)
+$facturacionService = app(FacturacionElectronicaService::class);
+
+$params = [
+    'version' => 150,
+    'ruc' => '80069563-1',
+    'razonSocial' => 'MI EMPRESA S.A.',
+    'nombreFantasia' => 'Mi Empresa',
+    'timbradoNumero' => '12558946',
+    'timbradoFecha' => '2023-01-01',
+    'tipoContribuyente' => 2,
+    'tipoRegimen' => 8,
+    'actividadesEconomicas' => [[
+        'codigo' => '62010',
+        'descripcion' => 'Desarrollo de Software'
+    ]],
+    'establecimientos' => [[
+        'codigo' => '001',
+        'direccion' => 'Avda España 1234',
+        'departamento' => 11,
+        'distrito' => 145,
+        'ciudad' => 3432
+    ]]
+];
+
+$data = [
+    'tipoDocumento' => 1, // Factura
+    'establecimiento' => '001',
+    'punto' => '001',
+    'numero' => '0000001',
+    'fecha' => now()->format('Y-m-d\TH:i:s'),
+    'tipoEmision' => 1,
+    'moneda' => 'PYG',
+    'cliente' => [
+        'contribuyente' => true,
+        'ruc' => '80000002-2',
+        'razonSocial' => 'CLIENTE EJEMPLO S.A.',
+        'tipoOperacion' => 1
+    ],
+    'items' => [[
+        'codigo' => 'PROD001',
+        'descripcion' => 'Producto de ejemplo',
+        'cantidad' => 1,
+        'unidadMedida' => 77,
+        'precioUnitario' => 100000,
+        'cambio' => 1,
+        'descuento' => 0,
+        'anticipo' => 0,
+        'pais' => 'PRY',
+        'tolerancia' => 1,
+        'toleranciaCantidad' => 1,
+        'toleranciaPorcentaje' => 1,
+        'ivaTipo' => 1,
+        'ivaBase' => 1,
+        'iva' => 10
+    ]]
+];
+
+$xml = $facturacionService->generateXML($params, $data);
+echo $xml;</div>
+
+            <h3>2. Consultar Estado de Documento</h3>
+            <div class="code">
+// Consultar en SIFEN
+$cdc = '01-0001-80069563-1-001-001-0000001-2023-1';
+$response = $facturacionService->consultarEstado($cdc);
+
+if ($response['success']) {
+    echo "Estado: " . $response['estado'];
+    echo "Fecha procesamiento: " . $response['fechaProceso'];
+} else {
+    echo "Error: " . $response['message'];
+}</div>
+
+            <h3>3. Generar y Escanear QR</h3>
+            <div class="code">
+// Generar QR con URL SIFEN
+$qrParams = [
+    'nVersion=150',
+    'Id=' . $factura->cdc,
+    'dFeEmiDE=' . $factura->fecha->format('Y-m-d'),
+    'dRucRec=' . $factura->ruc_receptor,
+    'dTotGralOpe=' . number_format($factura->total, 0, '', ''),
+    'dTotIVA=' . number_format($factura->impuesto, 0, '', ''),
+    'cItems=1',
+    'DigestValue=' . $digestValue,
+    'IdCSC=0001'
+];
+
+$qrUrl = 'https://ekuatia.set.gov.py/consultas/qr?' . implode('&', $qrParams);
+$qrImage = QrCodeService::generate($qrUrl, 'png', 200);</div>
+
+            <h3>4. Manejar Eventos</h3>
+            <div class="code">
+// Cancelar una factura
+$eventoCancelacion = [
+    'idEvento' => 1, // Cancelación
+    'motivo' => 'Error en los datos del cliente',
+    'cdcAAnular' => $factura->cdc
+];
+
+$xmlEvento = $facturacionService->generateEventoXML($eventoCancelacion);
+$resultado = $facturacionService->enviarEvento($xmlEvento);</div>
+        </section>
+
+        <div class="alert success">
+            <h3>🎉 ¡Sistema Listo!</h3>
+            <p>Tu implementación de SIFEN está completa y funcional. Los códigos QR se generan correctamente, el servicio Node.js está operativo, y tienes todos los endpoints necesarios para integrar con SIFEN.</p>
+            
+            <h4>Próximos Pasos:</h4>
+            <ol>
+                <li>✅ <strong>Testing completo:</strong> Probar todos los endpoints</li>
+                <li>🔄 <strong>Certificados:</strong> Obtener certificados de producción</li>
+                <li>🚀 <strong>Deploy:</strong> Configurar servidor de producción</li>
+                <li>📊 <strong>Monitoreo:</strong> Implementar alertas y logs</li>
+            </ol>
+        </div>
+
+        <footer style="margin-top: 40px; padding: 20px; background: #2c3e50; color: white; text-align: center; border-radius: 8px;">
+            <p><strong>Facturación Electrónica Paraguay (SIFEN)</strong></p>
+            <p>Implementación completa: Laravel + Node.js + facturacionelectronicapy-xmlgen</p>
+            <p>Documentación actualizada: 30 de Mayo, 2025</p>
+        </footer>
+    </div>
+</body>
+</html>

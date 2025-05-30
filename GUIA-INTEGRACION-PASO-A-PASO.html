@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Integración Laravel + Node.js para SIFEN</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+            padding: 10px;
+            background: #ecf0f1;
+            border-left: 5px solid #3498db;
+        }
+        h3 {
+            color: #34495e;
+            margin-top: 20px;
+        }
+        .step {
+            background: #fff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .step-number {
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .code {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Consolas', monospace;
+            margin: 10px 0;
+        }
+        .alert {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 5px solid;
+        }
+        .alert.info {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+        }
+        .alert.warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+        .alert.success {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        .alert.danger {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        .folder-structure {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            line-height: 1.4;
+        }
+        .folder {
+            margin-left: 20px;
+        }
+        .file {
+            margin-left: 30px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .table th {
+            background: #3498db;
+            color: white;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        .checklist li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+        }
+        .tabs {
+            margin: 20px 0;
+            border-bottom: 2px solid #3498db;
+        }
+        .tab {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #ecf0f1;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab.active {
+            background: #3498db;
+            color: white;
+        }
+        .diagram {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .diagram img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Integración Laravel + Node.js para SIFEN</h1>
+        <div class="alert info">
+            <strong>Guía Paso a Paso</strong> para implementar la integración completa entre Laravel y Node.js para el Sistema Integrado de Facturación Electrónica Nacional (SIFEN) de Paraguay.
+        </div>
+
+        <div class="step">
+            <h2><span class="step-number">1</span> Estructura del Proyecto</h2>
+            <div class="folder-structure">
+📁 facelec/
+├── 📁 app/
+│   ├── 📁 Http/Controllers/
+│   │   ├── 📄 QRCodeController.php
+│   │   └── 📄 FacturacionController.php
+│   ├── 📁 Services/
+│   │   └── 📄 FacturacionElectronicaService.php
+│   └── 📁 Models/
+│       └── 📄 FacturaElectronica.php
+├── 📁 node-service/
+│   ├── 📄 index.js
+│   ├── 📄 package.json
+│   ├── 📁 services/
+│   │   ├── 📄 facturacion-electronica.service.js
+│   │   └── 📄 sifen.service.js
+│   └── 📁 cert/
+│       ├── 📁 test/
+│       │   └── 📄 certificado-test.p12
+│       └── 📁 prod/
+│           └── 📄 certificado-prod.p12
+└── 📁 config/
+    └── 📄 facturacion_electronica.php</div>
+            
+            <div class="alert info">
+                Esta estructura es la base para una correcta integración entre Laravel y el servicio Node.js de SIFEN.
+            </div>
+        </div>
+
+        <div class="step">
+            <h2><span class="step-number">2</span> Instalación y Configuración</h2>
+            
+            <h3>2.1. Configuración de Laravel</h3>
+            <div class="code">
+# 1. Crear archivo .env y configurar variables
+FACTURACION_ELECTRONICA_NODE_API_URL=http://localhost:3000
+FACTURACION_ELECTRONICA_RUC=80069563-1
+FACTURACION_ELECTRONICA_RAZON_SOCIAL="MI EMPRESA S.A."
+FACTURACION_ELECTRONICA_NOMBRE_FANTASIA="Mi Empresa"
+FACTURACION_ELECTRONICA_TIMBRADO_NUMERO=12558946
+FACTURACION_ELECTRONICA_TIMBRADO_FECHA=2023-01-01
+FACTURACION_ELECTRONICA_TIPO_CONTRIBUYENTE=2
+FACTURACION_ELECTRONICA_TIPO_REGIMEN=8
+
+# 2. Configurar certificados
+FACTURACION_CERT_PATH=storage/app/certificados/certificado.p12
+FACTURACION_CERT_CLAVE=mi_clave_certificado
+FACTURACION_FIRMA_HABILITADA=true
+
+# 3. Configurar ambiente
+FACTURACION_AMBIENTE=test  # o 'prod' para producción</div>
+
+            <h3>2.2. Configuración del Servicio Node.js</h3>
+            <div class="code">
+# 1. Instalar dependencias
+cd node-service
+npm install facturacionelectronicapy-xmlgen express body-parser cors
+
+# 2. Crear certificados de prueba
+node generate-test-certificate.js
+
+# 3. Iniciar el servicio
+npm start</div>
+        </div>
+
+        <div class="step">
+            <h2><span class="step-number">3</span> Implementación del Servicio Node.js</h2>
+            
+            <h3>3.1. index.js</h3>
+            <div class="code">
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const facturacionService = require('./services/facturacion-electronica.service');
+const sifenService = require('./services/sifen.service');
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(cors());
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Rutas principales
+app.post('/generate-xml', async (req, res) => {
+    try {
+        const { params, data } = req.body;
+        const xml = await facturacionService.generateXML(params, data);
+        res.set('Content-Type', 'application/xml');
+        res.send(xml);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+app.post('/enviar-documento', async (req, res) => {
+    try {
+        const { xml, ambiente } = req.body;
+        const result = await sifenService.enviarDocumento(xml, ambiente);
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Servicio Node.js ejecutándose en puerto ${port}`);
+});</div>
+
+            <h3>3.2. facturacion-electronica.service.js</h3>
+            <div class="code">
+const { generateXML, validateData } = require('facturacionelectronicapy-xmlgen');
+
+class FacturacionElectronicaService {
+    async generateXML(params, data) {
+        // Validar datos
+        const isValid = await validateData(data);
+        if (!isValid) {
+            throw new Error('Datos inválidos para generar XML');
+        }
+
+        // Generar XML
+        return await generateXML(params, data, {
+            signXML: false,
+            validate: true
+        });
+    }
+}
+
+module.exports = new FacturacionElectronicaService();</div>
+
+            <h3>3.3. sifen.service.js</h3>
+            <div class="code">
+const soap = require('soap');
+const { SignedXml } = require('xml-crypto');
+const { DOMParser } = require('xmldom');
+
+class SifenService {
+    constructor() {
+        this.urls = {
+            test: {
+                recepcion: 'https://sifen-test.set.gov.py/de/ws/sync-services.wsdl'
+            },
+            prod: {
+                recepcion: 'https://sifen.set.gov.py/de/ws/sync-services.wsdl'
+            }
+        };
+    }
+
+    async enviarDocumento(xml, ambiente) {
+        const url = this.urls[ambiente].recepcion;
+        const client = await soap.createClientAsync(url);
+        
+        const result = await client.rEnviarDEAsync({
+            dXml: xml
+        });
+
+        return {
+            success: true,
+            result: result[0]
+        };
+    }
+}
+
+module.exports = new SifenService();</div>
+        </div>
+
+        <div class="step">
+            <h2><span class="step-number">4</span> Implementación en Laravel</h2>
+            
+            <h3>4.1. FacturacionElectronicaService.php</h3>
+            <div class="code">
+<?php
+
+namespace App\Services;
+
+use GuzzleHttp\Client;
+
+class FacturacionElectronicaService
+{
+    protected $client;
+    protected $baseUrl;
+    
+    public function __construct()
+    {
+        $this->client = new Client();
+        $this->baseUrl = config('facturacion_electronica.node_api_url');
+    }
+    
+    public function generateXML($params, $data)
+    {
+        $response = $this->client->post($this->baseUrl . '/generate-xml', [
+            'json' => [
+                'params' => $params,
+                'data' => $data
+            ]
+        ]);
+        
+        return $response->getBody()->getContents();
+    }
+    
+    public function enviarDocumento($xml, $ambiente = 'test')
+    {
+        $response = $this->client->post($this->baseUrl . '/enviar-documento', [
+            'json' => [
+                'xml' => $xml,
+                'ambiente' => $ambiente
+            ]
+        ]);
+        
+        return json_decode($response->getBody(), true);
+    }
+}</div>
+
+            <h3>4.2. FacturacionController.php</h3>
+            <div class="code">
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Services\FacturacionElectronicaService;
+use Illuminate\Http\Request;
+
+class FacturacionController extends Controller
+{
+    protected $facturacionService;
+    
+    public function __construct(FacturacionElectronicaService $facturacionService)
+    {
+        $this->facturacionService = $facturacionService;
+    }
+    
+    public function generarFactura(Request $request)
+    {
+        // Obtener configuración del contribuyente
+        $params = config('facturacion_electronica.contribuyente');
+        $params['actividadesEconomicas'] = config('facturacion_electronica.actividades_economicas');
+        $params['establecimientos'] = config('facturacion_electronica.establecimientos');
+        
+        // Datos de la factura del request
+        $data = $request->all();
+        
+        // Generar XML
+        $xml = $this->facturacionService->generateXML($params, $data);
+        
+        // Enviar a SIFEN
+        $response = $this->facturacionService->enviarDocumento(
+            $xml,
+            config('facturacion_electronica.ambiente')
+        );
+        
+        return response()->json($response);
+    }
+}</div>
+        </div>
+
+        <div class="step">
+            <h2><span class="step-number">5</span> Configuración de Rutas</h2>
+            
+            <h3>5.1. routes/api.php</h3>
+            <div class="code">
+<?php
+
+use App\Http\Controllers\FacturacionController;
+
+Route::prefix('facturacion')->group(function () {
+    Route::post('/generar', [FacturacionController::class, 'generarFactura']);
+    Route::post('/consultar/{cdc}', [FacturacionController::class, 'consultarEstado']);
+    Route::post('/cancelar', [FacturacionController::class, 'cancelarDocumento']);
+});</div>
+        </div>
+
+        <div class="step">
+            <h2><span class="step-number">6</span> Ejemplo de Uso</h2>
+            
+            <h3>6.1. Generar una Factura</h3>
+            <div class="code">
+// Ejemplo de request a la API
+POST /api/facturacion/generar
+Content-Type: application/json
+
+{
+    "tipoDocumento": 1,
+    "establecimiento": "001",
+    "punto": "001",
+    "numero": "0000001",
+    "fecha": "2024-03-12T10:30:00",
+    "tipoEmision": 1,
+    "tipoTransaccion": 1,
+    "tipoImpuesto": 1,
+    "moneda": "PYG",
+    "cliente": {
+        "contribuyente": true,
+        "ruc": "80000002-2",
+        "razonSocial": "CLIENTE EJEMPLO S.A.",
+        "nombreFantasia": "Cliente Ejemplo",
+        "tipoOperacion": 1,
+        "direccion": "Avda España 1234",
+        "numeroCasa": "1234",
+        "departamento": 11,
+        "distrito": 145,
+        "ciudad": 3432,
+        "pais": "PRY",
+        "tipoContribuyente": 2
+    },
+    "items": [
+        {
+            "codigo": "PROD001",
+            "descripcion": "Producto de ejemplo",
+            "cantidad": 1,
+            "precioUnitario": 100000,
+            "ivaTipo": 1,
+            "iva": 10
+        }
+    ]
+}</div>
+
+            <h3>6.2. Respuesta del Servidor</h3>
+            <div class="code">
+{
+    "success": true,
+    "protocoloNro": "12345678901234567890",
+    "estado": "Aprobado",
+    "fechaProceso": "2024-03-12T10:35:00",
+    "observaciones": []
+}</div>
+        </div>
+
+        <div class="step">
+            <h2><span class="step-number">7</span> Verificación y Testing</h2>
+            
+            <h3>7.1. Ejecutar las Pruebas</h3>
+            <div class="code">
+# 1. Verificar servicio Node.js
+curl http://localhost:3000
+
+# 2. Probar generación de XML
+curl -X POST http://localhost:3000/generate-xml -H "Content-Type: application/json" -d @test-data.json
+
+# 3. Verificar integración Laravel
+php artisan test --filter=FacturacionTest</div>
+
+            <h3>7.2. Checklist de Verificación</h3>
+            <ul class="checklist">
+                <li>Servicio Node.js activo y respondiendo</li>
+                <li>Certificados correctamente configurados</li>
+                <li>Variables de entorno configuradas</li>
+                <li>Rutas de Laravel accesibles</li>
+                <li>Generación de XML exitosa</li>
+                <li>Comunicación con SIFEN establecida</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h2><span class="step-number">8</span> Monitoreo y Logs</h2>
+            
+            <h3>8.1. Laravel Logs</h3>
+            <div class="code">
+# Ver logs de Laravel
+tail -f storage/logs/laravel.log
+
+# Ver logs específicos de facturación
+tail -f storage/logs/facturacion.log</div>
+
+            <h3>8.2. Node.js Logs</h3>
+            <div class="code">
+# Ver logs del servicio Node.js
+cd node-service
+pm2 logs  # Si usas PM2
+# o
+tail -f logs/node-service.log</div>
+        </div>
+
+        <div class="alert success">
+            <h3>🎉 ¡Integración Completa!</h3>
+            <p>La integración entre Laravel y Node.js para SIFEN está lista y funcionando. Asegúrate de:</p>
+            <ul>
+                <li>Mantener actualizados los certificados</li>
+                <li>Monitorear los logs regularmente</li>
+                <li>Verificar las respuestas de SIFEN</li>
+                <li>Hacer backups periódicos</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            <h4>Documentación Completa y Soporte</h4>
+            <p>Para más detalles, consulta:</p>
+            <ul style="list-style: none; padding: 0;">
+                <li>📚 Manual Técnico SIFEN</li>
+                <li>💻 Documentación de facturacionelectronicapy-xmlgen</li>
+                <li>🔧 Laravel API Documentation</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

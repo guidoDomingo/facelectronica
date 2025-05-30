@@ -1,0 +1,33 @@
+{
+  "name": "facturacion-electronica-service",
+  "version": "1.0.0",
+  "description": "Servicio Node.js para Facturación Electrónica Paraguay (SIFEN)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "facturacion",
+    "electronica",
+    "paraguay",
+    "sifen",
+    "set"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "facturacionelectronicapy-xmlgen": "^1.0.265",
+    "soap": "^1.1.11",
+    "xml-crypto": "^2.1.6",
+    "xmldom": "^0.6.0",
+    "xpath": "^0.0.32"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
