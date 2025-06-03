@@ -133,14 +133,60 @@
                         </div>
                     </div>
 
-                    <!-- Aquí iría el detalle de ítems cuando implementes la tabla de ítems -->
+                    <!-- Detalles de los items -->
                     <div class="card mt-3">
                         <div class="card-header bg-light">
                             <h5 class="mb-0">Detalles del documento</h5>
                         </div>
                         <div class="card-body">
-                            <div class="alert alert-info">
-                                Los detalles de los ítems se mostrarán aquí una vez que implemente la tabla de detalles de factura.
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Descripción</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio Unit.</th>
+                                            <th>IVA %</th>
+                                            <th>Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if($factura->xml)
+                                            @php
+                                                $items = [];
+                                                $xml = simplexml_load_string($factura->xml);
+                                                if($xml) {
+                                                    $gDtipms = $xml->xpath('//gDtipms');
+                                                    foreach($gDtipms as $item) {
+                                                        $items[] = [
+                                                            'codigo' => (string)$item->dCodInt,
+                                                            'descripcion' => (string)$item->dDesProSer,
+                                                            'cantidad' => (float)$item->dCantProSer,
+                                                            'precio_unitario' => (float)$item->dPUniProSer,
+                                                            'iva' => (float)$item->gCamIVA->dTasaIVA,
+                                                            'subtotal' => (float)$item->dTotOpeItem
+                                                        ];
+                                                    }
+                                                }
+                                            @endphp
+                                            @foreach($items as $item)
+                                                <tr>
+                                                    <td>{{ $item['codigo'] }}</td>
+                                                    <td>{{ $item['descripcion'] }}</td>
+                                                    <td class="text-end">{{ number_format($item['cantidad'], 0, ',', '.') }}</td>
+                                                    <td class="text-end">{{ number_format($item['precio_unitario'], 0, ',', '.') }}</td>
+                                                    <td class="text-end">{{ $item['iva'] }}%</td>
+                                                    <td class="text-end">{{ number_format($item['subtotal'], 0, ',', '.') }}</td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="6" class="text-center">No hay datos disponibles</td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
                             </div>
 
                             <div class="row mt-3 justify-content-end">
@@ -251,10 +297,29 @@
                             </div>
                             
                             <script>
-                            function refreshQR() {
+                            async function refreshQR() {
                                 const img = document.querySelector('#qr-image');
-                                const timestamp = new Date().getTime();
-                                img.src = img.src.split('?')[0] + '?refresh=' + timestamp;
+                                const imgUrl = img.src.split('?')[0];
+                                
+                                try {
+                                    // Show loading state
+                                    img.style.opacity = '0.5';
+                                    
+                                    // Force a new QR generation by making a fetch request first
+                                    const response = await fetch(imgUrl + '?regenerate=true');
+                                    if (!response.ok) throw new Error('Error regenerating QR');
+                                    
+                                    // Update the image with a cache-busting parameter
+                                    const timestamp = new Date().getTime();
+                                    img.src = imgUrl + '?t=' + timestamp;
+                                    
+                                    // Reset opacity after image loads
+                                    img.onload = () => img.style.opacity = '1';
+                                } catch (error) {
+                                    console.error('Error refreshing QR:', error);
+                                    alert('Error al regenerar el QR. Por favor intente nuevamente.');
+                                    img.style.opacity = '1';
+                                }
                             }
                             
                             function downloadQR() {

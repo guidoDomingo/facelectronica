@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FacturaElectronica;
-use App\Services\FacturacionElectronica\FacturacionElectronicaService;
+use App\Services\FacturacionElectronica\FacturacionElectronicaServiceV2;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -13,7 +13,7 @@ class FacturasElectronicasController extends Controller
 {
     protected $facturacionService;
     
-    public function __construct(FacturacionElectronicaService $facturacionService)
+    public function __construct(FacturacionElectronicaServiceV2 $facturacionService)
     {
         $this->facturacionService = $facturacionService;
     }
@@ -153,13 +153,16 @@ class FacturasElectronicasController extends Controller
                     'unidadMedida' => $item['unidad_medida'] ?? 77,
                     'cantidad' => $item['cantidad'],
                     'precioUnitario' => $item['precio_unitario'],
-                    'iva' => $item['iva'] ?? 10,
-                    'ivaTipo' => $ivaTipo,
-                    'ivaBase' => $ivaBase
+                    'iva' => [
+                        'tipo' => $ivaTipo,
+                        'porcentaje' => $item['iva'] ?? 10,
+                        'base' => $ivaBase,
+                        'monto' => ($item['precio_unitario'] * $item['cantidad'] * ($item['iva'] ?? 10)) / 100
+                    ]
                 ];
             }
-              // Generar y firmar XML
-            $xml = $this->facturacionService->generateAndSignXML($params, $data);
+            // Generar XML
+            $xml = $this->facturacionService->generateXML($params, $data);
             
             // Guardar XML en la factura
             $factura->xml = $xml;

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FacturacionElectronicaController;
 use App\Http\Controllers\FacturacionElectronicaEventosController;
+use App\Http\Controllers\Api\FacturacionElectronicaController as FacturacionElectronicaApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,10 +23,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Rutas para Facturación Electrónica
 Route::prefix('facturacion-electronica')->group(function () {
-    // Rutas básicas
+    // Rutas básicas (versión Node.js - mantenidas para compatibilidad)
     Route::post('/generar-xml', [FacturacionElectronicaController::class, 'generarXML']);
     Route::post('/generar-cdc', [FacturacionElectronicaController::class, 'generarCDC']);
     Route::post('/validar-datos', [FacturacionElectronicaController::class, 'validarDatos']);
+    
+    // Rutas para la implementación nativa en PHP
+    Route::prefix('php')->group(function () {
+        Route::post('/generar-xml', [FacturacionElectronicaApiController::class, 'generarXml']);
+        Route::post('/generar-cdc', [FacturacionElectronicaApiController::class, 'generarCdc']);
+        Route::post('/validar-datos', [FacturacionElectronicaApiController::class, 'validarDatos']);
+        Route::post('/generar-xml-evento-cancelacion', [FacturacionElectronicaApiController::class, 'generarXmlEventoCancelacion']);
+        Route::post('/generar-xml-evento-inutilizacion', [FacturacionElectronicaApiController::class, 'generarXmlEventoInutilizacion']);
+    });
     
     // Rutas de verificación SIFEN
     Route::get('/verificar-documento/{cdc}', [FacturacionElectronicaController::class, 'verificarDocumentoSifen']);

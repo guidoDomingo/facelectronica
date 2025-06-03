@@ -187,7 +187,7 @@
             }
         };
         
-        fetch('/api/facturacion-electronica/eventos/cancelacion', {
+        fetch('/api/facturacion-electronica/php/generar-xml-evento-cancelacion', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -226,7 +226,7 @@
             }
         };
         
-        fetch('/api/facturacion-electronica/eventos/inutilizacion', {
+        fetch('/api/facturacion-electronica/php/generar-xml-evento-inutilizacion', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -262,7 +262,7 @@
             }
         };
         
-        fetch('/api/facturacion-electronica/eventos/conformidad', {
+        fetch('/api/facturacion-electronica/php/generar-xml-evento-conformidad', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -297,7 +297,7 @@
             }
         };
         
-        fetch('/api/facturacion-electronica/eventos/disconformidad', {
+        fetch('/api/facturacion-electronica/php/generar-xml-evento-disconformidad', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

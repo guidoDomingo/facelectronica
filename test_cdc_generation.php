@@ -7,11 +7,11 @@ $app = require_once 'bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
-use App\Services\FacturacionElectronica\FacturacionElectronicaService;
+use App\Services\FacturacionElectronica\FacturacionElectronicaServiceV2;
 
 echo "=== Test CDC Generation ===\n\n";
 
-$service = new FacturacionElectronicaService();
+$service = new FacturacionElectronicaServiceV2();
 
 // Test data similar to what might be causing the issue
 $testData = [

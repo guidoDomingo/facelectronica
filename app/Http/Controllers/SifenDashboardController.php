@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FacturaElectronica;
 use App\Models\FacturaElectronicaEvento;
-use App\Services\FacturacionElectronica\FacturacionElectronicaService;
+use App\Services\FacturacionElectronica\FacturacionElectronicaServiceV2;
 use App\Services\FacturacionElectronica\CertificadoDigitalService;
 use App\Services\FacturacionElectronica\SifenLogger;
 use Illuminate\Http\Request;
@@ -19,7 +19,7 @@ class SifenDashboardController extends Controller
     protected $certificadoService;
     
     public function __construct(
-        FacturacionElectronicaService $facturacionService,
+        FacturacionElectronicaServiceV2 $facturacionService,
         CertificadoDigitalService $certificadoService
     ) {
         $this->facturacionService = $facturacionService;

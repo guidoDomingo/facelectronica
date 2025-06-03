@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FacturaElectronica;
-use App\Services\FacturacionElectronica\FacturacionElectronicaService;
+use App\Services\FacturacionElectronica\FacturacionElectronicaServiceV2;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Exception;
@@ -12,7 +12,7 @@ class FacturaVerificacionController extends Controller
 {
     protected $facturacionService;
     
-    public function __construct(FacturacionElectronicaService $facturacionService)
+    public function __construct(FacturacionElectronicaServiceV2 $facturacionService)
     {
         $this->facturacionService = $facturacionService;
     }
