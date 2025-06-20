@@ -9,6 +9,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const xmlgen = require('facturacionelectronicapy-xmlgen');
+const { consultarEstadoDocumento, enviarDocumento } = require('./services/sifen.service');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -22,13 +23,84 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
     res.json({
         message: 'API de Facturación Electrónica Paraguay',
-        version: '1.0.0',
-        endpoints: [
+        version: '1.0.0',        endpoints: [
             { method: 'POST', path: '/generate-xml', description: 'Genera un XML para SIFEN' },
             { method: 'POST', path: '/generate-cdc', description: 'Genera un CDC (Código de Control)' },
-            { method: 'POST', path: '/validate-data', description: 'Valida datos según el manual técnico de SIFEN' }
+            { method: 'POST', path: '/validate-data', description: 'Valida datos según el manual técnico de SIFEN' },
+            { method: 'POST', path: '/sifen/consultar-estado', description: 'Consulta el estado de un documento en SIFEN' },
+            { method: 'POST', path: '/sifen/enviar-documento', description: 'Envía un documento XML a SIFEN' }
         ]
     });
+});
+
+// SIFEN Endpoints
+
+// Endpoint para consultar estado de documento en SIFEN
+app.post('/sifen/consultar-estado', async (req, res) => {
+    try {
+        const { cdc, ambiente } = req.body;
+        
+        if (!cdc) {
+            return res.status(400).json({
+                success: false,
+                message: 'Se requiere el parámetro "cdc" (Código de Control del Documento)'
+            });
+        }
+        
+        console.log(`📋 API: Consultando estado del CDC: ${cdc} en ambiente: ${ambiente || 'test'}`);
+        
+        const resultado = await consultarEstadoDocumento(cdc, ambiente);
+        
+        res.json({
+            success: resultado.estado === 'exito',
+            ...resultado
+        });
+    } catch (error) {
+        console.error('Error en endpoint consultar-estado:', error);
+        res.status(500).json({
+            success: false,
+            estado: 'error',
+            respuesta: {
+                codigo: 'API-ERROR',
+                mensaje: error.message || 'Error interno del servidor',
+                fechaProceso: new Date().toISOString()
+            }
+        });
+    }
+});
+
+// Endpoint para enviar documento a SIFEN
+app.post('/sifen/enviar-documento', async (req, res) => {
+    try {
+        const { xml, ambiente } = req.body;
+        
+        if (!xml) {
+            return res.status(400).json({
+                success: false,
+                message: 'Se requiere el parámetro "xml" con el documento XML a enviar'
+            });
+        }
+        
+        console.log(`📤 API: Enviando documento a SIFEN en ambiente: ${ambiente || 'test'}`);
+        
+        const resultado = await enviarDocumento(xml, ambiente);
+        
+        res.json({
+            success: resultado.estado === 'exito',
+            ...resultado
+        });
+    } catch (error) {
+        console.error('Error en endpoint enviar-documento:', error);
+        res.status(500).json({
+            success: false,
+            estado: 'error',
+            respuesta: {
+                codigo: 'API-ERROR',
+                mensaje: error.message || 'Error interno del servidor',
+                fechaProceso: new Date().toISOString()
+            }
+        });
+    }
 });
 
 // Endpoint para generar XML

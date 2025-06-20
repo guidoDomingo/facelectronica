@@ -402,9 +402,11 @@ class FacturacionElectronicaService
                 'ambiente' => $ambiente,
                 'options' => $options
             ]);
-            
-            // Llamar al servicio Node.js para consultar el estado del documento
-            $response = Http::post($this->nodeApiUrl . '/consultar-estado-documento', $requestOptions);
+              // Llamar al servicio Node.js para consultar el estado del documento
+            $response = Http::timeout(30)->post($this->nodeApiUrl . '/sifen/consultar-estado', [
+                'cdc' => $cdc,
+                'ambiente' => $ambiente
+            ]);
             $responseData = $response->json();
             
             // Registrar la respuesta recibida
@@ -461,9 +463,11 @@ class FacturacionElectronicaService
             if (preg_match('/<dId>(.*?)<\/dId>/', $xml, $matches)) {
                 $cdc = $matches[1];
             }
-            
-            // Llamar al servicio Node.js para enviar el documento
-            $response = Http::post($this->nodeApiUrl . '/enviar-documento', $requestData);
+              // Llamar al servicio Node.js para enviar el documento
+            $response = Http::timeout(60)->post($this->nodeApiUrl . '/sifen/enviar-documento', [
+                'xml' => $xml,
+                'ambiente' => $ambiente
+            ]);
             $responseData = $response->json();
             
             // Registrar la respuesta recibida
@@ -606,8 +610,7 @@ class FacturacionElectronicaService
                 'tamaño_xml' => strlen($xml),
                 'ambiente' => $ambiente ?? 'desconocido',
                 'options' => $options
-            ]);
-            throw $e;
+            ]);            throw $e;
         }
     }
 }

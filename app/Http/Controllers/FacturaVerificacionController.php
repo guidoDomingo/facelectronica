@@ -11,8 +11,7 @@ use Exception;
 class FacturaVerificacionController extends Controller
 {
     protected $facturacionService;
-    
-    public function __construct(FacturacionElectronicaServiceV2 $facturacionService)
+      public function __construct(FacturacionElectronicaServiceV2 $facturacionService)
     {
         $this->facturacionService = $facturacionService;
     }

@@ -5,8 +5,7 @@ namespace App\Services\FacturacionElectronica;
 use App\Services\FacturacionElectronica\XmlGenerator\XmlGeneratorService;
 use App\Services\FacturacionElectronica\XmlGenerator\Helpers\CdcGenerator;
 use App\Services\FacturacionElectronica\SifenLogger;
-use App\Services\SifenClient;
-use App\Services\SifenClientV2;
+use App\Services\SifenClientV3;
 use Exception;
 
 /**
@@ -34,18 +33,18 @@ class FacturacionElectronicaServiceV2
     /**
      * Cliente Sifen
      * 
-     * @var SifenClientV2|SifenClient
+     * @var SifenClientV3
      */
     protected $sifenClient;
     
     /**
      * Constructor
      */
-    public function __construct($sifenClient)
+    public function __construct()
     {
         $this->xmlGenerator = new XmlGeneratorService();
         $this->cdcGenerator = new CdcGenerator();
-        $this->sifenClient = $sifenClient;
+        $this->sifenClient = new SifenClientV3();
     }
     
     /**
